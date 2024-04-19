@@ -11,8 +11,8 @@ require('dotenv').config();
 router.get('/', verifyToken, async (req, res) => {
     try {
         const rzp = new Razorpay({
-            key_id: process.env.RAZORPAY_API_ID,
-            key_secret: process.env.RAZORPAY_API_KEY
+            key_id: process.env.RAZORPAY_KEY_ID,
+            key_secret: process.env.RAZORPAY_KEY_SECRET
         });
 
         const amount = 9900; // Amount in smallest currency unit (e.g., paise for INR)
