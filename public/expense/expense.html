@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expense Form</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
+
+    <style>
+        body {
+            font-family: 'Arial';
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            color: #333;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            /* Added margin to center the container */
+            padding: 20px;
+            background-color: #fff;
+            /* Changed background color to white */
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+            /* Other existing styles */
+        }
+
+        .expense-form {
+            position: relative;
+            z-index: 1;
+            background-color: rgba(255, 165, 0, 0.9);
+            /* Light orange background */
+            padding: 20px;
+            /* Adjust padding for better visibility */
+        }
+
+
+        /* Add a box shadow to the container for a subtle depth effect */
+        .container {
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Your existing styles... */
+
+        body,
+        h1,
+        h2,
+        h3,
+        p,
+        ul,
+        li {
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background-color: #2eea41;
+            color: #fff;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .expense-form {
+            background-color: #72f490;
+            padding: 20px;
+            margin-top: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .expense-list {
+            margin-top: 20px;
+        }
+
+        .expense-item {
+            background-color: #fff;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Style form inputs */
+        input[type="text"],
+        input[type="number"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+
+        }
+
+        /* Style buttons */
+        .button {
+            background-color: #007bff;
+            color: #ffffff;
+            padding: 8px 16px;
+            border: none;
+            cursor: pointer;
+            border-radius: 3px;
+        }
+
+        button:hover {
+            background-color: #3367d6;
+        }
+
+        /* Responsive layout */
+        @media (max-width: 600px) {
+            .container {
+                padding: 10px;
+            }
+
+        }
+
+
+        #buyPremiumBtn {
+            /* Your button styles */
+            background-color: #f3a618;
+            color: #ffffff;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        #buyPremiumBtn:hover {
+            background-color: #ff3131;
+        }
+
+        /* CSS for premium message */
+        .premium-message {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+            text-align: center;
+
+        }
+
+        #showLeaderboardBtn {
+            display: none;
+            /* Initially hide the button */
+        }
+
+        /* Add styles for the download button */
+        #downloadExpensesBtn {
+            background-color: #007bff;
+            /* Blue background color */
+            color: #fff;
+            /* White text color */
+            padding: 10px 20px;
+            /* Add padding */
+            border: none;
+            /* Remove border */
+            border-radius: 5px;
+            /* Add border radius */
+            cursor: pointer;
+            /* Change cursor to pointer on hover */
+            transition: background-color 0.3s ease;
+            /* Smooth transition for background color */
+            display: none;
+        }
+
+        #downloadExpensesBtn:hover {
+            background-color: #0056b3;
+            /* Darker blue color on hover */
+        }
+
+        #downloadExpensesBtn:focus {
+            outline: none;
+            /* Remove default focus style */
+        }
+
+        #downloadedFilesTable {
+            display: none;
+        }
+
+        /* Style for table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        /* Style for table header */
+        thead th {
+            background-color: #007bff;
+            /* Blue background color */
+            color: #040404;
+            /* White text color */
+            padding: 10px;
+            /* Add padding */
+            text-align: left;
+            /* Align text to the left */
+        }
+
+        /* Style for table body rows */
+        tbody tr:nth-child(even) {
+            background-color: #f2f2f2;
+            /* Light gray background color for even rows */
+        }
+
+        tbody tr:hover {
+            background-color: #e2e2e2;
+            /* Darker gray background color on hover */
+        }
+
+        /* Style for table cells */
+        td,
+        th {
+            padding: 8px;
+            /* Add padding */
+            border: 1px solid #ddd;
+            /* Add border */
+        }
+
+        /* Style for download link */
+        .download-list li a {
+            text-decoration: none;
+            background-color: #007bff;
+            /* Blue background color */
+            color: #fff;
+            /* White text color */
+            padding: 8px 12px;
+            /* Add padding */
+            border-radius: 5px;
+            /* Add border radius */
+            display: inline-block;
+        }
+
+        .download-list li a:hover {
+            background-color: #0056b3;
+            /* Darker blue color on hover */
+        }
+
+        /* Style for pagination buttons */
+        .pagination-btn {
+            background-color: #007bff;
+            color: #fff;
+            padding: 8px 16px;
+            border: none;
+            cursor: pointer;
+            border-radius: 3px;
+            margin: 0 5px;
+        }
+
+        .pagination-btn:hover {
+            background-color: #0056b3;
+        }
+
+        .pagination-btn:disabled {
+            background-color: #ced4da;
+            color: #6c757d;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <form id="addForm" class="expense-form">
+            <label for="ExpenseAmount">Choose Expense Amount:</label>
+            <input type="number" id="ExpenseAmount" class="form-control-sm" required />
+
+
+            <label for="Description">Choose Description:</label>
+            <input type="text" id="Description" class="form-control-sm m-2" required />
+
+            <label for="Category">Category:</label>
+            <select id="Category" name="Category" required>
+                <option value="">Select Category</option>
+                <option value="Food">Food</option>
+                <option value="Electricity">Electricity</option>
+                <option value="Rent">Rent</option>
+                <option value="Fuel">Fuel</option>
+            </select>
+
+            <input type="submit" class="button" value="Add Expense">
+        </form>
+
+        <label for="expensesPerPage">Rows Per page:</label>
+        <select id="expensesPerPage" onchange="handleExpensesPerPageChange()">
+            <option value="">Enter no. of Rows</option>
+            <option value="10">10 expenses per page</option>
+            <option value="15">15 expenses per page</option>
+            <option value="20">20 expenses per page</option>
+        </select>
+
+        <ul id="items" class="expense-list">
+
+        </ul>
+        <div id="pagination"></div>
+
+    </div>
+
+    <div id="premiumMessage"></div>
+
+    <button id="showLeaderboardBtn" class="btn btn-primary">Show Leaderboard</button>
+
+    <div id="leaderboardContainer"></div>
+
+    <button id="downloadExpensesBtn" class="btn btn-primary">Download Expenses</button>
+
+    <table id="downloadedFilesTable" class="download-list">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Download Link</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Table rows will be dynamically added here -->
+        </tbody>
+    </table>
+
+    <button id="buyPremiumBtn" class="btn btn-primary btn-lg" style="position: fixed; bottom: 20px; right: 20px;">
+        Buy Premium Membership
+    </button>
+    
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.3.6/axios.min.js"></script>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+    <script src="expense.js"> </script>
+
+</body>
+
+</html>

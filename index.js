@@ -22,7 +22,7 @@ app.use(morgan('combined', { stream: accessLogStream }));
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(helmet());
+app. use( helmet({ contentSecurityPolicy: false, }) ); 
 app.use(compression());
 
 
@@ -61,6 +61,13 @@ app.use("/", premium);
 
 const password = require("./routes/password");
 app.use("/password", password);
+
+app.use((req, res) => {
+  console.log(`url`, req.url)
+  res.sendFile(path.join(__dirname,`public/${req.url}`))
+})
+
+
 
 // Start server
 const PORT = process.env.PORT || 3000;
