@@ -10,7 +10,7 @@ window.onload = checkPremiumStatus;
 async function checkPremiumStatus() {
     const token = localStorage.getItem('token');
     try {
-        const response = await axios.get('http://13.239.36.38:3000/premium', {
+        const response = await axios.get('http://54.252.187.194:3000/premium', {
             headers: { 'Authorization': token }
         });
 
@@ -57,7 +57,7 @@ function addExpense(event) {
     };
 
     if (editingItem === null) {
-        axios.post("http://13.239.36.38:3000/user/expense", obj, {
+        axios.post("http://54.252.187.194:3000/user/expense", obj, {
             headers: {
                 'Authorization': token // Include the token in the 'Authorization' header
             }
@@ -71,7 +71,7 @@ function addExpense(event) {
                 console.log(err);
             });
     } else {
-        axios.put(`http://13.239.36.38:3000/user/expense/${editingItem}`, obj, {
+        axios.put(`http://54.252.187.194:3000/user/expense/${editingItem}`, obj, {
             headers: {
                 'Authorization': token // Include the token in the 'Authorization' header
             }
@@ -104,7 +104,7 @@ function showExpenseOnScreen(obj) {
     deleteBtn.appendChild(document.createTextNode('Delete'));
     deleteBtn.onclick = () => {
         const token = localStorage.getItem('token');
-        axios.delete(`http://13.239.36.38:3000/user/expense/${obj.id}`, {
+        axios.delete(`http://54.252.187.194:3000/user/expense/${obj.id}`, {
             headers: {
                 'Authorization': token // Include the token in the 'Authorization' header
             }
@@ -140,13 +140,13 @@ function showExpenseOnScreen(obj) {
 
 document.getElementById('buyPremiumBtn').onclick = async function (e) {
     const token = localStorage.getItem('token');
-    const response = await axios.get('http://13.239.36.38:3000/purchase/premiummembership', { headers: { 'Authorization': token } });
+    const response = await axios.get('http://54.252.187.194:3000/purchase/premiummembership', { headers: { 'Authorization': token } });
     console.log(response);
     var option = {
         "key": response.data.key_id,
         "order_id": response.data.order.id,
         "handler": async function (response) {
-            await axios.post('http://13.239.36.38:3000/purchase/premiummembership', {
+            await axios.post('http://54.252.187.194:3000/purchase/premiummembership', {
                 order_id: option.order_id,
                 payment_id: response.razorpay_payment_id,
                 status: response.razorpay_status // Include the payment status received from Razorpay
@@ -171,7 +171,7 @@ document.getElementById('buyPremiumBtn').onclick = async function (e) {
 async function showLeaderboard() {
     try {
         const token = localStorage.getItem('token');
-        const response = await axios.get('http://13.239.36.38:3000/premium/leaderboard', {
+        const response = await axios.get('http://54.252.187.194:3000/premium/leaderboard', {
             headers: { 'Authorization': token }
         });
         const leaderboardData = response.data;
@@ -213,7 +213,7 @@ document.getElementById('downloadExpensesBtn').addEventListener('click', async (
     try {
         const token = localStorage.getItem('token');
 
-        const response = await axios.get('http://13.239.36.38:3000/user/expense/download', {
+        const response = await axios.get('http://54.252.187.194:3000/user/expense/download', {
             headers: { 'Authorization': token },
 
         });
@@ -243,7 +243,7 @@ document.getElementById('downloadExpensesBtn').addEventListener('click', async (
 async function fetchDownloadedFiles() {
     const token = localStorage.getItem('token');
     try {
-        const response = await axios.get('http://13.239.36.38:3000/user/expense/downloaded-files', {
+        const response = await axios.get('http://54.252.187.194:3000/user/expense/downloaded-files', {
             headers: { 'Authorization': token }
         });
         document.getElementById('downloadedFilesTable').style.display = 'block';
@@ -287,7 +287,7 @@ async function fetchDownloadedFiles() {
 //     document.getElementById('items').innerHTML = '';
 //     const token = localStorage.getItem('token');
 //     try {
-//         const response = await axios.get("http://13.239.36.38:3000/user/expense", {
+//         const response = await axios.get("http://54.252.187.194:3000/user/expense", {
 //             headers: {
 //                 'Authorization': token // Include the JWT token in the 'Authorization' header
 //             }
@@ -319,7 +319,7 @@ async function fetchExpenses(page = 1, limit = localStorage.getItem('expensesPer
     document.getElementById('items').innerHTML = '';
     const token = localStorage.getItem('token');
     try {
-        const response = await axios.get(`http://13.239.36.38:3000/user/expense`, {
+        const response = await axios.get(`http://54.252.187.194:3000/user/expense`, {
             headers: {
                 'Authorization': token
             },
