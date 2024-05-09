@@ -102,37 +102,9 @@ button:hover {
         </form>
         <button id="login-btn">Existing User? Log In</button>
     </div>
+    
 
-    <script >document.getElementById('signup-form').addEventListener('submit', function(event) {
-        event.preventDefault();
-    
-    
-        const name = document.getElementById('name').value;
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
-    
-        
-        const userData = {
-            name: name,
-            email: email,
-            password: password
-        };
-    
-        axios.post('http://localhost:3000/user/signup', userData)
-            .then(response => {
-              console.log( response.status === 200);
-              window.location.href = 'login.html';  
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                
-            });
-    });
-    
-    document.getElementById('login-btn').addEventListener('click', function() {
-        window.location.href = 'login.html';
-    });
-    </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.3.6/axios.min.js"></script>
+    <script src="signup.js" > </script>
 </body>
 </html>
