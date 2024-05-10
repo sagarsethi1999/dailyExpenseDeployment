@@ -64,6 +64,7 @@ app.use("/password", password);
 
 app.use((req, res) => {
   console.log(`url`, req.url);
+  console.log('fully automated');
   res.sendFile(path.join(__dirname,`public/${req.url}`))
 })
 
