@@ -1,3 +1,27 @@
-ssh -i "keypairforexpensetrakcer.pem" ec2-user@ec2-13-239-6-219.ap-southeast-2.compute.amazonaws.com
+ssh -i "Expensetracker.pem" ec2-user@ec2-54-252-187-194.ap-southeast-2.compute.amazonaws.com
 
 cd C:\Users\sagar\OneDrive\Documents\aws_credential
+
+chmod +x node_modules/.bin/nodemon
+
+Building in workspace /var/lib/jenkins/workspace/Expense Tracker
+
+cd dailyExpenseDeployment
+
+/var/lib/jenkins/workspace/DailyExpense
+
+sudo npm install --unsafe-perm=true --allow-root
+sudo pm2 stop all
+sudo pm2 start index.js
+
+
+RAZORPAY_KEY_ID=rzp_test_y3XGdS9NBFf4KT
+RAZORPAY_KEY_SECRET=sLycyKw9dR44Ypiz1QqO5jvG
+
+
+DB_NAME=DailyExpense
+DB_USER=sagars
+DB_PASSWORD=sagarhero
+DB_HOST=database-1.cvmumoekue2z.ap-southeast-2.rds.amazonaws.com
+~                                                                    
+https://github.com/sagarsethi1999/dailyExpenseDeployment/tree/frontendreadytodeploy

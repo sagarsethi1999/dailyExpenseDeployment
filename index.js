@@ -1,15 +1,17 @@
-// index.js
+
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const User = require("./models/user");
 const Expense = require('./models/expense');
-const Order = require('./models/orders');
-const ForgotPasswordRequest = require('./models/ForgotPasswordRequests');
+const Order = require('./models/order');
+const ForgotPasswordRequest = require('./models/ForgotPasswordRequest');
 const fs = require('fs');
 const morgan = require('morgan');
 const path = require('path');
 const compression = require('compression');
+
+const mongoose = require('mongoose');
 
 
 const app = express();
@@ -17,7 +19,7 @@ const helmet = require('helmet');
 
 const accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'), { flags: 'a' });
 
-// Middleware
+
 app.use(morgan('combined', { stream: accessLogStream }));
 app.use(cors());
 app.use(bodyParser.json());
@@ -26,27 +28,9 @@ app. use( helmet({ contentSecurityPolicy: false, }) );
 app.use(compression());
 
 
-// Sync database
-const sequelize = require("./util/database");
-sequelize
-.sync()
-// .sync({force: true})
-  .then(() => {
-    console.log('Database & tables created!');
-  })
-  .catch(err => console.error('Unable to sync database:', err));
 
-// Define association
-User.hasMany(Expense, { foreignKey: 'userID' });
-Expense.belongsTo(User, { foreignKey: 'userID' });
 
-User.hasMany(Order);
-Order.belongsTo(User);
 
-User.hasMany(ForgotPasswordRequest);
-ForgotPasswordRequest.belongsTo(User, { onDelete: 'CASCADE' });
-
-// Routes
 const userRoutes = require("./routes/userRoutes");
 app.use("/user", userRoutes);
 
@@ -63,15 +47,17 @@ const password = require("./routes/password");
 app.use("/password", password);
 
 app.use((req, res) => {
-  console.log(`url`, req.url);
-  console.log('fully automated');
   res.sendFile(path.join(__dirname,`public/${req.url}`))
 })
 
 
 
-// Start server
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+mongoose
+.connect('mongodb+srv://sagars:sagarhero143@sagars.gpcupps.mongodb.net/expense_tracker?retryWrites=true&w=majority&appName=sagars')
+.then(result => {
+    app.listen(3000);
+    console.log('data base is connected!!!')
+})
+.catch(err => {
+    console.log(err);
 });

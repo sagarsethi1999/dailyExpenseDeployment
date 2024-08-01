@@ -13,7 +13,7 @@ document.getElementById('signup-form').addEventListener('submit', function(event
         password: password
     };
 
-    axios.post('http://54.252.187.194:3000/user/signup', userData)
+    axios.post('http://localhost:3000/user/signup', userData)
         .then(response => {
           console.log( response.status === 200);
           window.location.href = '../login/login.html';  

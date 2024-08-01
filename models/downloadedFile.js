@@ -1,27 +1,24 @@
-// models/downloadedFile.js
-const { DataTypes } = require('sequelize');
-const sequelize = require('../util/database');
+const mongoose = require('mongoose');
 
-const DownloadedFile = sequelize.define('downloadedFile', {
-  id: {
-    type: DataTypes.INTEGER,
-    primaryKey: true,
-    autoIncrement: true,
-    allowNull: false
-  },
-  userId: {
-    type: DataTypes.INTEGER,
-    allowNull: false
-  },
-  fileURL: {
-    type: DataTypes.STRING,
-    allowNull: false
-  },
-  createdAt: {
-    type: DataTypes.DATE,
-    allowNull: false,
-    defaultValue: DataTypes.NOW
-  }
+const downloadedFileSchema = new mongoose.Schema({
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: 'User'
+    },
+    fileURL: {
+        type: String,
+        required: true
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now,
+        required: true
+    }
 });
 
+const DownloadedFile = mongoose.model('DownloadedFile', downloadedFileSchema);
+
 module.exports = DownloadedFile;
+
+

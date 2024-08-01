@@ -1,38 +1,52 @@
 const express = require('express');
 const router = express.Router();
 const uuid = require('uuid');
-const SibApiV3Sdk = require('sib-api-v3-sdk'); 
+const SibApiV3Sdk = require('sib-api-v3-sdk');
 const bcrypt = require('bcrypt');
 require('dotenv').config();
 
 const User = require('../models/user');
-const Forgotpassword = require('../models/ForgotPasswordRequests');
+const ForgotPasswordRequest = require('../models/ForgotPasswordRequest');
 
 router.post('/forgotpassword', async (req, res) => {
     try {
         const { email } = req.body;
-        const user = await User.findOne({ where: { email } });
+        const user = await User.findOne({ email });
+        console.log('user for email', user);
 
         if (user) {
             const id = uuid.v4();
-            await user.createForgotpassword({ id, active: true });
+            const newForgotPasswordRequest = new ForgotPasswordRequest({
+                id,
+                userId: user._id,
+                active: true
+            });
+            await newForgotPasswordRequest.save();
 
-            // Configure Sendinblue SDK
             const defaultClient = SibApiV3Sdk.ApiClient.instance;
             const apiKey = defaultClient.authentications['api-key'];
             apiKey.apiKey = process.env.SENDINBLUE_API_KEY;
 
+           
+
+            console.log("Using API Key:", apiKey.apiKey);
+
             const apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
 
-            // Create a new transactional email request
             const sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail();
-            sendSmtpEmail.sender = { email: 'yj.rocks.2411@gmail.com' };
+            sendSmtpEmail.sender = { email: 'sagar@gmail.com' };
             sendSmtpEmail.to = [{ email }];
             sendSmtpEmail.subject = 'Password Reset Request';
             sendSmtpEmail.htmlContent = `<a href="http://localhost:3000/password/resetpassword/${id}">Reset Password</a>`;
 
-            // Send the email
-            const response = await apiInstance.sendTransacEmail(sendSmtpEmail);
+
+            try {
+                await apiInstance.sendTransacEmail(sendSmtpEmail);
+                console.log('Reminder email sent successfully');
+            } catch (error) {
+                console.error('Error sending reminder email:', error);
+            }
+
 
             return res.status(200).json({ message: 'Link to reset password sent to your email', success: true });
         } else {
@@ -44,15 +58,12 @@ router.post('/forgotpassword', async (req, res) => {
     }
 });
 
-
 router.get('/resetpassword/:id', async (req, res) => {
     try {
         const id = req.params.id;
-        const forgotpasswordrequest = await Forgotpassword.findOne({ where: { id } });
+        const forgotPasswordRequest = await ForgotPasswordRequest.findOne({ id, active: true });
 
-        if (forgotpasswordrequest && forgotpasswordrequest.active) {
-            await forgotpasswordrequest.update({ active: false });
-            
+        if (forgotPasswordRequest) {
             return res.status(200).send(`<html>
                                             <form action="/password/updatepassword/${id}" method="post">
                                                 <label for="newpassword">Enter New password</label>
@@ -61,43 +72,56 @@ router.get('/resetpassword/:id', async (req, res) => {
                                             </form>
                                         </html>`);
         } else {
-            throw new Error('Invalid or expired reset link');
+            return res.status(400).send('Invalid or expired reset link');
         }
     } catch (error) {
         console.error(error);
         return res.status(500).json({ message: error.message, success: false });
     }
 });
+
 
 router.post('/updatepassword/:resetpasswordid', async (req, res) => {
     try {
         const { newpassword } = req.body;
         const resetpasswordid = req.params.resetpasswordid;
-        
-        const forgotpasswordrequest = await Forgotpassword.findOne({ where: { id: resetpasswordid } });
-        
-        if (forgotpasswordrequest && forgotpasswordrequest.active) {
-            const user = await User.findOne({ where: { id: forgotpasswordrequest.userId } });
+
+        const forgotPasswordRequest = await ForgotPasswordRequest.findOne({ id: resetpasswordid, active: true });
+
+        if (forgotPasswordRequest) {
+            const user = await User.findById(forgotPasswordRequest.userId);
 
             if (user) {
                 const saltRounds = 10;
                 const hash = await bcrypt.hash(newpassword, saltRounds);
-                
-                await user.update({ password: hash });
-                await forgotpasswordrequest.update({ active: false });
-                
-                return res.status(200).json({ message: 'Password successfully updated', success: true });
+
+                user.password = hash;
+                await user.save();
+
+                forgotPasswordRequest.active = false;
+                await forgotPasswordRequest.save();
+
+
+
+                return res.status(200).send(`<html>
+                                             <body>
+                                                 <h1>Password Reset Successful</h1>
+                                                 <p>Your password has been successfully updated.</p>
+                                                 <a href="/login/login.html">Go to Login</a>
+                                             </body>
+                                             </html>`);
             } else {
-                throw new Error('User not found');
+                return res.status(404).json({ message: 'User not found', success: false });
             }
         } else {
-            throw new Error('Invalid or expired reset link');
+            return res.status(400).json({ message: 'Invalid or expired reset link', success: false });
         }
     } catch (error) {
         console.error(error);
         return res.status(500).json({ message: error.message, success: false });
     }
 });
+
 
 module.exports = router;
 
@@ -117,61 +141,3 @@ module.exports = router;
 
 
 
-
-
-
-
-
-
-
-
-// const express = require('express');
-// const router = express.Router();
-// const SibApiV3Sdk = require('sib-api-v3-sdk');
-
-// // Configure the Sendinblue API client
-// const defaultClient = SibApiV3Sdk.ApiClient.instance;
-// const apiKey = defaultClient.authentications['api-key'];
-// apiKey.apiKey = 'xsmtpsib-45f3531979250a67e8fb17492bcfcfa9732207b10f7debc1f2f25f6a2e506693-6RMbpXNDJqw4tvBO'; // Replace 'YOUR_SMTP_API_KEY' with your actual SMTP API key
-
-// // Define your route handler
-// router.post('/forgotpassword', async (req, res) => {
-//   try {
-//     const { email } = req.body;
-//     console.log(req.body);
-
-//     // Check if email is missing in the request body
-//     if (!email) {
-//       return res.status(400).json({ error: 'Email is missing in the request body' });
-//     }
-  
-//     // Initialize the Sendinblue transactional email API
-//     const apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
-
-//     // Create a new transactional email request
-//     const sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail();
-
-//     // Set the sender's email address
-//     sendSmtpEmail.sender = { email: 'pubgsagar7@gmail.com' };
-
-//     // Set the recipient's email address
-//     sendSmtpEmail.to = [{ email }];
-
-//     // Set the subject of the email
-//     sendSmtpEmail.subject = 'Password Reset Request';
-
-//     // Set the HTML content of the email (you can customize this)
-//     sendSmtpEmail.htmlContent = '<p>Click the link to reset your password</p>';
-
-//     // Send the transactional email
-//     const response = await apiInstance.sendTransacEmail(sendSmtpEmail);
-
-//     // Respond with success message
-//     res.status(200).json({ message: 'Password reset email sent successfully' });
-//   } catch (error) {
-//     console.error('Error sending password reset email:', error);
-//     res.status(500).json({ error: 'Internal server error' });
-//   }
-// });
-
-// module.exports = router;

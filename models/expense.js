@@ -1,26 +1,25 @@
-// models/expense.js
-const Sequelize = require('sequelize');
-const sequelize = require('../util/database');
+const mongoose = require('mongoose');
 
-const Expense = sequelize.define('expense', {
+const expenseSchema = new mongoose.Schema({
     ExpenseAmount: {
-        type: Sequelize.INTEGER,
-        allowNull: false
+        type: Number,
+        required: true
     },
     Description: {
-        type: Sequelize.STRING,
-        allowNull: false
+        type: String,
+        required: true
     },
     Category: {
-        type: Sequelize.STRING,
-        allowNull: false
+        type: String,
+        required: true
     },
     userID: {
-        type: Sequelize.INTEGER,
-        allowNull: false
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: 'User'
     }
 });
 
+const Expense = mongoose.model('Expense', expenseSchema);
 
 module.exports = Expense;
-

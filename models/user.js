@@ -1,45 +1,53 @@
-// models/user.js
-const Sequelize = require('sequelize');
-const sequelize = require('../util/database');
+const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 
-const User = sequelize.define('user', {
-    // Define your user model fields here
-    id: {
-        type: Sequelize.INTEGER,
-        autoIncrement: true,
-        allowNull: false,
-        primaryKey: true
-    },
+const userSchema = new mongoose.Schema({
     email: {
-        type: Sequelize.STRING,
-        allowNull: false,
-        
+        type: String,
+        required: true,
+        unique: true
     },
     name: {
-        type: Sequelize.STRING,
-        allowNull: false
+        type: String,
+        required: true
     },
     password: {
-        type: Sequelize.STRING,
-        allowNull: false
+        type: String,
+        required: true
     },
     premiumUser: {
-        type: Sequelize.BOOLEAN,
-        defaultValue: false // Default value is false
+        type: Boolean,
+        default: false
     },
     totalExpense: {
-        type: Sequelize.INTEGER,
-        defaultValue: 0 // Default value is 0
+        type: Number,
+        default: 0
     }
 });
 
-User.prototype.validPassword = async function(password) {
+
+userSchema.virtual('expenses', {
+    ref: 'Expense',
+    localField: '_id',
+    foreignField: 'userID'
+});
+
+userSchema.virtual('orders', {
+    ref: 'Order',
+    localField: '_id',
+    foreignField: 'userId'
+});
+
+userSchema.virtual('forgotPasswordRequests', {
+    ref: 'ForgotPassword',
+    localField: '_id',
+    foreignField: 'userId'
+});
+
+userSchema.methods.validPassword = async function(password) {
     return await bcrypt.compare(password, this.password);
 };
 
+const User = mongoose.model('User', userSchema);
 
 module.exports = User;
-
-
-  
